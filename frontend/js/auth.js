@@ -1,58 +1,48 @@
-// file: aplikasi-kasir/frontend/js/auth.js
-
+// src/frontend/js/auth.js
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
     const loginMessage = document.getElementById('loginMessage');
 
     if (loginForm) {
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Mencegah reload halaman
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Mencegah pengiriman form default
 
-            const username = usernameInput.value;
-            const password = passwordInput.value;
+            const username = loginForm.username.value;
+            const password = loginForm.password.value;
 
-            loginMessage.textContent = ''; // Clear previous messages
-            loginMessage.classList.remove('text-success', 'text-danger'); // Clear classes
+            loginMessage.textContent = ''; // Bersihkan pesan sebelumnya
+            loginMessage.className = ''; // Bersihkan kelas sebelumnya
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/login', {
+                // Menggunakan BASE_URL yang didefinisikan di main.js
+                // Pastikan main.js dimuat sebelum auth.js di index.html
+                const response = await fetch(`${BASE_URL}/auth/login`, { // Menggunakan BASE_URL
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ username, password }),
                 });
-                
-                const data = await response.json(); // Ambil data JSON terlepas dari status response
 
                 if (response.ok) {
-                    // --- PERBAIKAN UTAMA DI SINI ---
-                    localStorage.setItem('token', data.token); // KEY HARUS 'token'
-                    localStorage.setItem('username', data.user.username); // Simpan username secara terpisah
-                    localStorage.setItem('role', data.user.role);       // Simpan role secara terpisah
-                    
-                    // Bersihkan key lama yang tidak konsisten jika ada
-                    localStorage.removeItem('user'); // Hapus key 'user' yang menyimpan objek JSON
-                    localStorage.removeItem('jwToken'); // Hapus key 'jwToken' jika pernah ada
-                    // --- AKHIR PERBAIKAN UTAMA ---
+                    const data = await response.json();
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('username', data.username);
+                    localStorage.setItem('role', data.role);
 
-                    loginMessage.textContent = 'Login berhasil! Mengalihkan...';
-                    loginMessage.classList.add('text-success');
-                    window.location.href = 'dashboard.html'; // Atau 'products.html'
+                    loginMessage.textContent = 'Login berhasil! Mengarahkan ke dashboard...';
+                    loginMessage.className = 'text-green-500'; // Warna hijau untuk sukses
+                    window.location.href = 'dashboard.html'; // Arahkan ke dashboard
                 } else {
-                    loginMessage.textContent = data.message || 'Login gagal. Silakan coba lagi.';
-                    loginMessage.classList.add('text-danger');
-                    console.error('Login failed response:', data);
+                    const errorData = await response.json();
+                    loginMessage.textContent = errorData.message || 'Login gagal. Periksa kredensial Anda.';
+                    loginMessage.className = 'text-red-500'; // Warna merah untuk error
                 }
             } catch (error) {
                 console.error('Terjadi kesalahan jaringan atau server tidak dapat dijangkau:', error);
                 loginMessage.textContent = 'Tidak dapat terhubung ke server. Periksa koneksi Anda.';
-                loginMessage.classList.add('text-danger');
+                loginMessage.className = 'text-red-500'; // Warna merah untuk error
             }
         });
-    } else {
-        console.error('Error: loginForm element not found in auth.js!');
     }
 });
