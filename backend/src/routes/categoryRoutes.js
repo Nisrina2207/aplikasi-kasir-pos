@@ -1,6 +1,6 @@
 const express = require('express');
 const categoryController = require('../controllers/categoryController');
-const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
+const { authenticateToken, authorizeRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -15,8 +15,8 @@ router.use(authenticateToken);
 
 // Rute yang hanya bisa diakses oleh 'admin' (membutuhkan otorisasi peran)
 // Operasi CRUD (Create, Update, Delete) kategori biasanya hanya untuk admin
-router.post('/', authorizeRoles('admin'), categoryController.createCategory);
-router.put('/:id', authorizeRoles('admin'), categoryController.updateCategory);
-router.delete('/:id', authorizeRoles('admin'), categoryController.deleteCategory);
+router.post('/', authorizeRole('admin'), categoryController.createCategory);
+router.put('/:id', authorizeRole('admin'), categoryController.updateCategory);
+router.delete('/:id', authorizeRole('admin'), categoryController.deleteCategory);
 
 module.exports = router;
