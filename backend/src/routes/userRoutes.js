@@ -1,33 +1,18 @@
 const express = require('express');
-const userController = require('../controllers/userController');
-const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
-const { body } = require('express-validator');
-
 const router = express.Router();
+const userController = require('../controllers/userController');
+const { authenticateToken, authorizeRole } = require('../middleware/authMiddleware');
 
-// Rute pendaftaran (publik, tidak memerlukan token)
-router.post('/register', [
-    body('username').isLength({ min: 3 }).withMessage('Username must be at least 3 characters long'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
-    body('role').isIn(['cashier', 'admin']).withMessage('Invalid role')
-], userController.registerUser);
+// Rute untuk mendapatkan semua pengguna (hanya admin)
+router.get('/', authenticateToken, authorizeRole(['admin']), userController.getAllUsers);
 
-// Rute login (publik, tidak memerlukan token)
-router.post('/login', userController.loginUser);
+// Rute untuk mendapatkan pengguna berdasarkan ID (hanya admin)
+router.get('/:id', authenticateToken, authorizeRole(['admin']), userController.getUserById);
 
-// Semua rute di bawah ini memerlukan token JWT yang valid
-router.use(authenticateToken);
+// Rute untuk memperbarui pengguna (hanya admin)
+router.put('/:id', authenticateToken, authorizeRole(['admin']), userController.updateUser);
 
-// Mendapatkan semua pengguna (hanya admin)
-router.get('/', authorizeRoles('admin'), userController.getAllUsers);
-
-// Mendapatkan pengguna berdasarkan ID (admin atau pengguna itu sendiri)
-router.get('/:id', userController.getUserById);
-
-// Memperbarui pengguna (admin atau pengguna itu sendiri)
-router.put('/:id', userController.updateUser);
-
-// Menghapus pengguna (hanya admin)
-router.delete('/:id', authorizeRoles('admin'), userController.deleteUser);
+// Rute untuk menghapus pengguna (hanya admin)
+router.delete('/:id', authenticateToken, authorizeRole(['admin']), userController.deleteUser);
 
 module.exports = router;
