@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Produk</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <!-- Custom CSS Anda -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigasi Aplikasi -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">POS App</a>
+            <!-- Tombol Toggler Navbar untuk tampilan mobile -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pos.html">POS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="products.html">Manajemen Produk</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="transactions.html">Riwayat Transaksi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reports.html">Laporan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="categories.html">Manajemen Kategori</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="users.html">Manajemen Pengguna</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="nav-link text-white" id="userGreeting">Halo, Pengguna!</span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light ms-2" id="logoutBtn">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Akhir Navigasi Aplikasi -->
+
+    <div class="container mt-4">
+        <h2>Manajemen Produk</h2>
+
+        <!-- Form Tambah/Edit Produk -->
+        <div class="card mb-4">
+            <div class="card-header">
+                Form Produk
+            </div>
+            <div class="card-body">
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+                    <div class="form-group">
+                        <label for="productName">Nama Produk</label>
+                        <input type="text" class="form-control" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Deskripsi</label>
+                        <textarea class="form-control" id="productDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Harga</label>
+                        <input type="number" class="form-control" id="productPrice" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productStock">Stok</label>
+                        <input type="number" class="form-control" id="productStock" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Kategori</label>
+                        <select class="form-control" id="productCategory">
+                            <!-- Options will be loaded by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productBarcode">Barcode (Opsional)</label>
+                        <input type="text" class="form-control" id="productBarcode">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Simpan Produk</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display:none;">Batal Edit</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Daftar Produk -->
+        <h3>Daftar Produk</h3>
+        <div id="productMessage" class="alert d-none" role="alert"></div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Kategori</th>
+                        <th>Barcode</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                    <!-- Products will be loaded here by JavaScript -->
+                    <tr><td colspan="7" class="text-center text-muted">Memuat produk...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PENTING: jQuery harus dimuat SEBELUM Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- PENTING: Bootstrap JS (termasuk Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Skrip kustom Anda -->
+    <script src="js/main.js"></script>
+    <script src="js/productsPage.js"></script>
+</body>
+</html>

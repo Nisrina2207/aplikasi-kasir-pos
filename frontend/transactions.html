@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Transaksi</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <!-- Custom CSS Anda -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigasi Aplikasi -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">POS App</a>
+            <!-- Tombol Toggler Navbar untuk tampilan mobile -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pos.html">POS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html">Manajemen Produk</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="transactions.html">Riwayat Transaksi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reports.html">Laporan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="categories.html">Manajemen Kategori</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="users.html">Manajemen Pengguna</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="nav-link text-white" id="userGreeting">Halo, Pengguna!</span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light ms-2" id="logoutBtn">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Akhir Navigasi Aplikasi -->
+
+    <div class="container mt-4">
+        <h2>Daftar Transaksi</h2>
+        <div id="transactionMessage" class="alert d-none" role="alert">
+            <!-- Pesan akan ditampilkan di sini -->
+        </div>
+
+        <!-- Filter Tanggal dan Hapus Berdasarkan Tanggal -->
+        <div class="card mb-4">
+            <div class="card-header">
+                Filter & Aksi Massal Transaksi
+            </div>
+            <div class="card-body">
+                <form id="filterTransactionsForm">
+                    <div class="form-row">
+                        <div class="form-group col-md-5">
+                            <label for="filterStartDate">Dari Tanggal:</label>
+                            <input type="date" class="form-control" id="filterStartDate">
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="filterEndDate">Sampai Tanggal:</label>
+                            <input type="date" class="form-control" id="filterEndDate">
+                        </div>
+                        <div class="form-group col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-info btn-block"><i class="fas fa-filter"></i> Filter</button>
+                        </div>
+                    </div>
+                </form>
+                <hr>
+                <div class="text-right">
+                    <button type="button" class="btn btn-danger" id="deleteByDateBtn" title="Hanya Admin" disabled>
+                        <i class="fas fa-trash"></i> Hapus Transaksi Berdasarkan Tanggal
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tanggal</th>
+                        <th>Kasir</th>
+                        <th>Pelanggan</th>
+                        <th>Meja</th>
+                        <th>Diskon</th>   <!-- Kolom Baru -->
+                        <th>Pajak (%)</th> <!-- Kolom Baru -->
+                        <th>Total</th>
+                        <th>Dibayar</th>
+                        <th>Kembalian</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionsTableBody">
+                    <!-- Data transaksi akan dimuat di sini oleh JavaScript -->
+                    <tr><td colspan="11" class="text-center text-muted">Memuat transaksi...</td></tr> <!-- colspan disesuaikan -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Transaction Detail Modal -->
+        <div class="modal fade" id="transactionDetailModal" tabindex="-1" aria-labelledby="transactionDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="transactionDetailModalLabel">Detail Transaksi</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>ID Transaksi:</strong> <span id="modalTransactionId"></span></p>
+                        <p><strong>Tanggal:</strong> <span id="modalTransactionDate"></span></p>
+                        <p><strong>Kasir:</strong> <span id="modalCashier"></span></p>
+                        <p><strong>Pelanggan:</strong> <span id="modalCustomerName"></span></p>
+                        <p><strong>Meja:</strong> <span id="modalTableNumber"></span></p>
+                        <p><strong>Diskon:</strong> <span id="modalDiscountAmount"></span></p>   <!-- Elemen Baru -->
+                        <p><strong>Pajak (%):</strong> <span id="modalTaxPercentage"></span></p> <!-- Elemen Baru -->
+                        <p><strong>Jumlah Pajak:</strong> <span id="modalTaxAmount"></span></p>   <!-- Elemen Baru -->
+                        <p><strong>Total:</strong> <span id="modalTotalAmount"></span></p>
+                        <p><strong>Dibayar:</strong> <span id="modalPaidAmount"></span></p>
+                        <p><strong>Kembalian:</strong> <span id="modalChangeAmount"></span></p>
+                        <p><strong>Metode Pembayaran:</strong> <span id="modalPaymentMethod"></span></p>
+                        <h6>Item Transaksi:</h6>
+                        <ul id="modalTransactionItems" class="list-group">
+                            <!-- Transaction items will be loaded here -->
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PENTING: jQuery harus dimuat SEBELUM Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- PENTING: Bootstrap JS (termasuk Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Skrip kustom Anda -->
+    <script src="js/main.js"></script>
+    <script src="js/transactionsPage.js"></script>
+</body>
+</html>

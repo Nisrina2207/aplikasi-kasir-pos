@@ -1,0 +1,66 @@
+/* Contoh kustomisasi dasar untuk tampilan aplikasi POS */
+
+body {
+    background-color: #f8f9fa; /* Warna latar belakang abu-abu muda */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Penyesuaian umum untuk kartu */
+.card {
+    border-radius: 0.75rem; /* Sudut lebih membulat */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Bayangan lebih jelas */
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-3px); /* Efek hover sedikit naik */
+}
+
+.card-header {
+    font-weight: bold;
+    font-size: 1.25rem; /* Ukuran font header lebih besar */
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+}
+
+/* Pastikan warna primer Bootstrap diterapkan dengan baik */
+.card-header.bg-primary {
+    background-color: #0d6efd !important; /* Warna biru Bootstrap 5 */
+    color: white !important;
+}
+
+/* Beberapa gaya untuk pesan login/error/sukses */
+#loginMessage {
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    margin-top: 1rem;
+}
+
+#loginMessage.text-success {
+    background-color: #d1e7dd; /* Latar belakang hijau muda */
+    color: #0f5132 !important; /* Warna teks hijau gelap */
+    border: 1px solid #badbcc;
+}
+
+#loginMessage.text-danger {
+    background-color: #f8d7da; /* Latar belakang merah muda */
+    color: #842029 !important; /* Warna teks merah gelap */
+    border: 1px solid #f5c2c7;
+}
+
+/* Styling untuk tabel */
+.table {
+    margin-top: 1.5rem;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+/* Styling untuk tombol di navbar */
+.navbar-nav .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
