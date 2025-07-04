@@ -15,13 +15,23 @@ const app = express();
 // Mengambil PORT dari variabel lingkungan atau menggunakan 5000 sebagai default
 const PORT = process.env.PORT || 5000;
 
+// ====================================================================================
+// KONFIGURASI CORS YANG LEBIH ROBUST
+// Pastikan ini adalah URL frontend Vercel Anda yang sebenarnya
+const allowedOrigin = 'https://aplikasi-kasir-pos.vercel.app/'; // GANTI DENGAN URL YANG ANDA SALIN DARI VERCEL
+
 // Middleware CORS
-// Mengizinkan permintaan dari URL frontend Vercel Anda
 app.use(cors({
-    origin: 'https://aplikasi-kasir-pos.vercel.app', // GANTI DENGAN URL FRONTEND VERCEL ANDA YANG SEBENARNYA
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
+    origin: allowedOrigin,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Tambahkan OPTIONS secara eksplisit
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'] // Tambahkan header yang diizinkan
 }));
+
+// Tangani permintaan OPTIONS preflight secara eksplisit
+// Ini memastikan bahwa preflight request direspons dengan benar
+app.options('*', cors());
+// ====================================================================================
 
 // Middleware untuk mengurai body permintaan JSON
 app.use(express.json());
