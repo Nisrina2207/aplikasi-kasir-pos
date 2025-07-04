@@ -1,73 +1,45 @@
-// server.js
-
-// 1. Muat variabel lingkungan dari file .env
-// Penting: Ini harus menjadi baris pertama di server.js
-require('dotenv').config();
-
-// 2. Impor modul yang diperlukan
-const express = require('express'); // Framework web Express.js
-const cors = require('cors');       // Middleware untuk mengizinkan Cross-Origin Resource Sharing
-const pool = require('./db');       // Impor objek pool koneksi database dari db.js
-
-// Impor rute-rute API Anda
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
+const userRoutes = require('./routes/userRoutes');
 const reportRoutes = require('./routes/reportRoutes');
-const userRoutes = require('./routes/userRoutes'); // <--- BARIS BARU: Import route pengguna
+const categoryRoutes = require('./routes/categoryRoutes');
 
-// 3. Inisialisasi aplikasi Express
+// Memuat variabel lingkungan dari file .env
+dotenv.config();
+
 const app = express();
-const PORT = process.env.PORT || 5000; // Ambil port dari .env atau gunakan 5000 sebagai default
+// Mengambil PORT dari variabel lingkungan atau menggunakan 5000 sebagai default
+const PORT = process.env.PORT || 5000;
 
-// 4. Konfigurasi Middleware Global
-// Middleware CORS: Mengizinkan permintaan dari domain lain (misalnya, frontend Anda)
-app.use(cors());
+// Middleware CORS
+// Mengizinkan permintaan dari URL frontend Vercel Anda
+app.use(cors({
+    origin: 'https://aplikasi-kasir-pos.vercel.app', // GANTI DENGAN URL FRONTEND VERCEL ANDA YANG SEBENARNYA
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 
-// Middleware express.json(): Mengurai body permintaan dalam format JSON
-// Ini penting agar Anda bisa menerima data JSON dari Postman atau frontend
+// Middleware untuk mengurai body permintaan JSON
 app.use(express.json());
 
-// 5. Definisikan Rute API
-// Anda akan mengatur base path untuk setiap set rute.
-
-// Rute test sederhana untuk memastikan server berjalan
-// Ketika Anda mengakses http://localhost:5000/ di browser, ini akan merespons
-app.get('/', (req, res) => {
-  res.send('Backend Aplikasi Kasir Berjalan!');
-});
-
-// Gunakan rute otentikasi
-// Semua rute yang didefinisikan di authRoutes.js akan di-prefix dengan /api/auth
-// Contoh: POST /api/auth/register, POST /api/auth/login
+// Mengatur rute-rute API
 app.use('/api/auth', authRoutes);
-
-// Gunakan rute produk
-// Semua rute yang didefinisikan di productRoutes.js akan di-prefix dengan /api/products
 app.use('/api/products', productRoutes);
-
-// Gunakan rute kategori
-// Semua rute yang didefinisikan di categoryRoutes.js akan di-prefix dengan /api/categories
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/reports', reportRoutes);
 app.use('/api/categories', categoryRoutes);
 
-// Gunakan rute transaksi
-// Semua rute yang didefinisikan di transactionRoutes.js akan di-prefix dengan /api/transactions
-app.use('/api/transactions', transactionRoutes);
-
-app.use('/api/reports', reportRoutes);
-
-app.use('/api/users', userRoutes); // <--- BARIS BARU: Daftarkan route pengguna
-
-// 6. Penanganan Error (Opsional, tapi direkomendasikan untuk aplikasi nyata)
-// Ini adalah middleware catch-all untuk error yang tidak tertangkap
-app.use((err, req, res, next) => {
-  console.error(err.stack); // Log error stack trace ke konsol server
-  res.status(500).send('Something broke!'); // Kirim respons error generik ke klien
+// Rute dasar untuk pengujian API
+app.get('/', (req, res) => {
+    res.send('POS Backend API is running!');
 });
 
-
-// 7. Mulai Server
+// Memulai server dan mendengarkan di port yang ditentukan
 app.listen(PORT, () => {
-  console.log(`Server backend berjalan di http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
