@@ -1,6 +1,5 @@
 // aplikasi-kasir/backend/controllers/categoryController.js
 const pool = require('../db'); // Pastikan path ini benar sesuai lokasi db.js Anda
-const { validationResult } = require('express-validator'); // BARIS BARU: Impor validationResult
 
 // Mendapatkan semua kategori
 exports.getAllCategories = async (req, res) => {
