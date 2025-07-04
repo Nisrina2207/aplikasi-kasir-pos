@@ -1,22 +1,21 @@
 const express = require('express');
-const productController = require('../controllers/productController');
-const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
-
 const router = express.Router();
+const productController = require('../controllers/productController');
+const { authenticateToken, authorizeRole } = require('../middleware/authMiddleware'); // PERUBAHAN: Pastikan ini menggunakan authorizeRole singular
 
-// Rute publik: Mendapatkan semua produk dan produk berdasarkan ID
-// Ini diperlukan agar halaman POS dapat memuat daftar produk tanpa perlu login terlebih dahulu.
+// Rute untuk mendapatkan semua produk
 router.get('/', productController.getAllProducts);
+
+// Rute untuk mendapatkan produk berdasarkan ID
 router.get('/:id', productController.getProductById);
 
-// Rute yang dilindungi: Membutuhkan login untuk operasi selain GET produk
-// Semua rute di bawah ini akan memerlukan token JWT yang valid
-router.use(authenticateToken); 
+// Rute untuk membuat produk baru (hanya admin)
+router.post('/', authenticateToken, authorizeRole(['admin']), productController.createProduct);
 
-// Rute yang hanya bisa diakses oleh 'admin' (membutuhkan otorisasi peran)
-// Operasi CRUD (Create, Update, Delete) produk biasanya hanya untuk admin
-router.post('/', authorizeRoles('admin'), productController.createProduct);
-router.put('/:id', authorizeRoles('admin'), productController.updateProduct);
-router.delete('/:id', authorizeRoles('admin'), productController.deleteProduct);
+// Rute untuk memperbarui produk (hanya admin)
+router.put('/:id', authenticateToken, authorizeRole(['admin']), productController.updateProduct);
+
+// Rute untuk menghapus produk (hanya admin)
+router.delete('/:id', authenticateToken, authorizeRole(['admin']), productController.deleteProduct);
 
 module.exports = router;
