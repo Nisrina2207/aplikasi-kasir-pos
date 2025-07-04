@@ -1,7 +1,6 @@
 const express = require('express');
 const transactionController = require('../controllers/transactionController');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
-const { body, query } = require('express-validator'); // Tambahkan query
 
 const router = express.Router();
 
