@@ -1,8 +1,14 @@
 // src/frontend/js/main.js
 // Fungsi-fungsi ini didefinisikan di global scope agar bisa diakses oleh semua script halaman
 
+// ====================================================================================
+// PENTING: GANTI URL INI DENGAN URL BACKEND RAILWAY ANDA YANG SEBENARNYA
+// Pastikan ada '/api' di akhir jika rute backend Anda diawali dengan '/api'
+const BASE_URL = 'https://aplikasi-kasir-pos-production.up.railway.app/api';
+// ====================================================================================
+
 // Menambahkan parameter skipAuthCheck
-async function apiFetch(url, options = {}, skipAuthCheck = false) { // PASTIKAN skipAuthCheck = false DI SINI
+async function apiFetch(url, options = {}, skipAuthCheck = false) {
     const token = localStorage.getItem('token');
     console.log('API Fetch - URL:', url);
     console.log('API Fetch - Token from localStorage (main.js):', token ? 'Token found (' + token.substring(0, 10) + '...)' : 'No token found');
@@ -13,7 +19,7 @@ async function apiFetch(url, options = {}, skipAuthCheck = false) { // PASTIKAN 
     };
 
     // Logika otentikasi hanya berjalan jika skipAuthCheck adalah false
-    if (!skipAuthCheck) { // PASTIKAN KONDISI INI
+    if (!skipAuthCheck) {
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
         } else {
@@ -36,7 +42,7 @@ async function apiFetch(url, options = {}, skipAuthCheck = false) { // PASTIKAN 
         console.log('API Fetch (main.js) - Response URL:', response.url);
 
         // Hanya cek 401/403 jika otentikasi tidak dilewati
-        if (!skipAuthCheck && (response.status === 401 || response.status === 403)) { // PASTIKAN KONDISI INI
+        if (!skipAuthCheck && (response.status === 401 || response.status === 403)) {
             console.error('API Fetch (main.js): Received', response.status, 'Unauthorized/Forbidden. Session expired or invalid token.');
             alert('Sesi Anda telah berakhir atau Anda tidak memiliki akses. Silakan login kembali.');
             localStorage.removeItem('token');
