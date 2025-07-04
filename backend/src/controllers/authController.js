@@ -1,56 +1,68 @@
-// backend/src/controllers/authController.js
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const pool = require('../config/db'); // Mengimpor koneksi database
-require('dotenv').config({ path: '../../.env' }); // Pastikan path benar
+    const pool = require('../db');
+    const bcrypt = require('bcrypt'); // PERUBAHAN: Ubah dari 'bcryptjs' menjadi 'bcrypt'
+    const jwt = require('jsonwebtoken');
 
-const register = async (req, res) => {
-    const { username, password, role } = req.body;
-    try {
-        // Hashing password sebelum menyimpannya di database
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const result = await pool.query(
-            'INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3) RETURNING id, username, role',
-            [username, hashedPassword, role || 'kasir'] // Default role 'kasir' jika tidak disediakan
-        );
-        res.status(201).json({ message: 'User registered successfully', user: result.rows[0] });
-    } catch (err) {
-        console.error("Error during registration:", err);
-        if (err.code === '23505') { // PostgreSQL error code for unique violation
-            return res.status(400).json({ message: 'Username sudah terdaftar.' });
+    // Mendaftar pengguna baru
+    exports.register = async (req, res) => {
+        const { username, password, role } = req.body;
+        try {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const newUser = await pool.query(
+                'INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3) RETURNING id, username, role',
+                [username, hashedPassword, role || 'cashier'] // Default role 'cashier'
+            );
+            res.status(201).json({ message: 'User registered successfully', user: newUser.rows[0] });
+        } catch (err) {
+            console.error('Error registering user:', err.message);
+            if (err.code === '23505') { // Duplicate username error code
+                return res.status(409).json({ error: 'Username already exists' });
+            }
+            res.status(500).json({ error: 'Server error during registration' });
         }
-        res.status(500).json({ message: 'Gagal mendaftar user.' });
-    }
-};
+    };
 
-const login = async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-        const user = result.rows[0];
+    // Login pengguna
+    exports.login = async (req, res) => {
+        const { username, password } = req.body;
+        try {
+            const userResult = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+            if (userResult.rows.length === 0) {
+                return res.status(400).json({ error: 'Invalid credentials' });
+            }
 
-        if (!user) {
-            return res.status(400).json({ message: 'Username atau password salah.' });
+            const user = userResult.rows[0];
+            const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+
+            if (!isPasswordValid) {
+                return res.status(400).json({ error: 'Invalid credentials' });
+            }
+
+            const token = jwt.sign(
+                { id: user.id, username: user.username, role: user.role },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' } // Token berlaku 1 jam
+            );
+
+            res.json({ message: 'Logged in successfully', token, user: { id: user.id, username: user.username, role: user.role } });
+
+        } catch (err) {
+            console.error('Error logging in:', err.message);
+            res.status(500).json({ error: 'Server error during login' });
         }
+    };
 
-        // Membandingkan password yang dimasukkan dengan hash di database
-        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-        if (!isPasswordValid) {
-            return res.status(400).json({ message: 'Username atau password salah.' });
+    // Mendapatkan profil pengguna (hanya untuk pengguna yang diautentikasi)
+    exports.getProfile = async (req, res) => {
+        try {
+            // req.user datang dari middleware authMiddleware
+            const user = await pool.query('SELECT id, username, role FROM users WHERE id = $1', [req.user.id]);
+            if (user.rows.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.json(user.rows[0]);
+        } catch (err) {
+            console.error('Error fetching user profile:', err.message);
+            res.status(500).json({ error: 'Server error fetching profile' });
         }
-
-        // Membuat JSON Web Token (JWT)
-        const token = jwt.sign(
-            { id: user.id, username: user.username, role: user.role }, // Payload token
-            process.env.JWT_SECRET, // Kunci rahasia dari .env
-            { expiresIn: '1h' } // Token berlaku 1 jam
-        );
-
-        res.json({ message: 'Login berhasil', token, user: { id: user.id, username: user.username, role: user.role } });
-    } catch (err) {
-        console.error("Error during login:", err);
-        res.status(500).json({ message: 'Gagal login.' });
-    }
-};
-
-module.exports = { register, login };
+    };
+    
