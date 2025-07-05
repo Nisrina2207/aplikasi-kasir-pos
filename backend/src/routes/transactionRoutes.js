@@ -5,6 +5,7 @@ const transactionController = require('../controllers/transactionController');
 const { verifyToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 // Rute untuk mendapatkan semua transaksi (hanya admin)
+// Pastikan transactionController.getAllTransactions didefinisikan
 router.get('/', verifyToken, authorizeRoles(['admin']), transactionController.getAllTransactions);
 
 // Rute untuk mendapatkan transaksi berdasarkan ID (hanya admin)
