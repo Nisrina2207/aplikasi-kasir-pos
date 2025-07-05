@@ -1,12 +1,28 @@
 const express = require('express');
-const router = express.Router();
+const router = express();
 const transactionController = require('../controllers/transactionController');
-const { authenticateToken, authorizeRole } = require('../middleware/authMiddleware'); // PERUBAHAN: Pastikan ini menggunakan destructuring
+// PENTING: Impor verifyToken dan authorizeRoles dengan benar
+const { verifyToken, authorizeRoles } = require('../middleware/authMiddleware');
 
-// ... rute-rute lainnya ...
+// Rute untuk mendapatkan semua transaksi (hanya admin)
+router.get('/', verifyToken, authorizeRoles(['admin']), transactionController.getAllTransactions);
 
-router.delete('/by-date', authenticateToken, authorizeRole(['admin']), transactionController.deleteTransactionsByDate);
+// Rute untuk mendapatkan transaksi berdasarkan ID (hanya admin)
+router.get('/:id', verifyToken, authorizeRoles(['admin']), transactionController.getTransactionById);
 
-// ... rute-rute lainnya ...
+// Rute untuk mendapatkan transaksi berdasarkan tanggal (hanya admin)
+router.get('/by-date', verifyToken, authorizeRoles(['admin']), transactionController.getTransactionsByDate);
+
+// Rute untuk membuat transaksi baru (kasir atau admin)
+router.post('/', verifyToken, authorizeRoles(['kasir', 'admin']), transactionController.createTransaction);
+
+// Rute untuk memperbarui transaksi (hanya admin)
+router.put('/:id', verifyToken, authorizeRoles(['admin']), transactionController.updateTransaction);
+
+// Rute untuk menghapus transaksi (hanya admin)
+router.delete('/:id', verifyToken, authorizeRoles(['admin']), transactionController.deleteTransaction);
+
+// Rute untuk menghapus transaksi berdasarkan tanggal (hanya admin)
+router.delete('/by-date', verifyToken, authorizeRoles(['admin']), transactionController.deleteTransactionsByDate);
 
 module.exports = router;
