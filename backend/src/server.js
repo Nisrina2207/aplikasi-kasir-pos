@@ -13,14 +13,14 @@ dotenv.config();
 
 const app = express();
 // Mengambil PORT dari variabel lingkungan atau menggunakan 5000 sebagai default
-// Render akan menyediakan PORT secara otomatis, jadi process.env.PORT akan terisi
+// Cyclic akan menyediakan PORT secara otomatis, jadi process.env.PORT akan terisi
 const PORT = process.env.PORT || 5000;
 
 // Middleware untuk mengurai body permintaan JSON
 app.use(express.json());
 
 // ====================================================================================
-// KONFIGURASI CORS UNTUK RENDER.COM
+// KONFIGURASI CORS UNTUK CYCLIC.SH
 // Pastikan ini adalah URL frontend Vercel Anda yang disalin LANGSUNG dari browser, TANPA GARIS MIRING DI AKHIR
 const allowedOrigin = 'https://aplikasi-kasir-pos.vercel.app'; 
 
