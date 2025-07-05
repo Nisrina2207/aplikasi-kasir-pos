@@ -1,22 +1,21 @@
 const express = require('express');
+const router = express.Router(); // Pastikan ini express.Router()
 const categoryController = require('../controllers/categoryController');
-const { authenticateToken, authorizeRole } = require('../middleware/authMiddleware');
+// PENTING: Impor verifyToken dan authorizeRoles dengan benar
+const { verifyToken, authorizeRoles } = require('../middleware/authMiddleware');
 
-const router = express.Router();
-
-// Rute publik: Mendapatkan semua kategori dan kategori berdasarkan ID
-// Ini diperlukan agar halaman Manajemen Produk dapat memuat daftar kategori tanpa perlu login terlebih dahulu.
+// Rute publik: Mendapatkan semua kategori
 router.get('/', categoryController.getAllCategories);
 router.get('/:id', categoryController.getCategoryById);
 
 // Rute yang dilindungi: Membutuhkan login untuk operasi selain GET kategori
 // Semua rute di bawah ini akan memerlukan token JWT yang valid
-router.use(authenticateToken);
+router.use(verifyToken); // PENTING: Gunakan verifyToken di sini
 
 // Rute yang hanya bisa diakses oleh 'admin' (membutuhkan otorisasi peran)
 // Operasi CRUD (Create, Update, Delete) kategori biasanya hanya untuk admin
-router.post('/', authorizeRole('admin'), categoryController.createCategory);
-router.put('/:id', authorizeRole('admin'), categoryController.updateCategory);
-router.delete('/:id', authorizeRole('admin'), categoryController.deleteCategory);
+router.post('/', authorizeRoles(['admin']), categoryController.createCategory);
+router.put('/:id', authorizeRoles(['admin']), categoryController.updateCategory);
+router.delete('/:id', authorizeRoles(['admin']), categoryController.deleteCategory);
 
 module.exports = router;
