@@ -1,8 +1,8 @@
 // api/auth/login.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-// Karena ini fungsi serverless, kita perlu mengimpor koneksi DB dan model di sini
 // Pastikan path ini benar relatif ke api/auth/login.js
+// ../../backend/src/db.js  -> Naik 2 level ke root, lalu masuk backend/src/db.js
 const pool = require('../../backend/src/db'); 
 const User = require('../../backend/src/models/User'); 
 
@@ -24,7 +24,6 @@ module.exports = async (req, res) => {
 
     try {
         // Cari pengguna berdasarkan username
-        // Asumsi User.findByUsername sudah terhubung ke db.js
         const user = await User.findByUsername(username); 
         if (!user) {
             return res.status(400).json({ error: 'Username atau password salah.' });
