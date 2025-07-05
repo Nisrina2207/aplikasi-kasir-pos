@@ -1,11 +1,15 @@
 const express = require('express');
-// PENTING: Gunakan express.Router() untuk membuat instance router
 const router = express.Router(); 
 const transactionController = require('../controllers/transactionController');
 const { verifyToken, authorizeRoles } = require('../middleware/authMiddleware');
 
+// ====================================================================================
+// DEBUG LOGS UNTUK transactionController
+console.log('Debug (transactionRoutes.js): transactionController object:', transactionController);
+console.log('Debug (transactionRoutes.js): transactionController.getAllTransactions:', transactionController.getAllTransactions);
+// ====================================================================================
+
 // Rute untuk mendapatkan semua transaksi (hanya admin)
-// Pastikan transactionController.getAllTransactions didefinisikan
 router.get('/', verifyToken, authorizeRoles(['admin']), transactionController.getAllTransactions);
 
 // Rute untuk mendapatkan transaksi berdasarkan ID (hanya admin)
