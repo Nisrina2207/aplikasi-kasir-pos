@@ -1,22 +1,19 @@
 const express = require('express');
+const router = express.Router(); // Pastikan ini express.Router()
 const reportController = require('../controllers/reportController');
-const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
+// PENTING: Impor verifyToken dan authorizeRoles dengan benar
+const { verifyToken, authorizeRoles } = require('../middleware/authMiddleware');
 
-const router = express.Router();
+// Rute untuk mendapatkan laporan penjualan harian (hanya admin)
+router.get('/daily-sales', verifyToken, authorizeRoles(['admin']), reportController.getDailySalesReport);
 
-// Semua rute laporan memerlukan otentikasi (pengguna harus login)
-router.use(authenticateToken);
+// Rute untuk mendapatkan laporan penjualan bulanan (hanya admin)
+router.get('/monthly-sales', verifyToken, authorizeRoles(['admin']), reportController.getMonthlySalesReport);
 
-// Rute untuk ringkasan penjualan (bisa diakses kasir atau admin)
-router.get('/sales', reportController.getSalesSummary);
+// Rute untuk mendapatkan laporan penjualan berdasarkan produk (hanya admin)
+router.get('/product-sales', verifyToken, authorizeRoles(['admin']), reportController.getProductSalesReport);
 
-// Rute untuk produk terlaris (bisa diakses kasir atau admin)
-router.get('/top-products', reportController.getTopSellingProducts);
-
-// Rute untuk detail penjualan (bisa diakses kasir atau admin)
-router.get('/detailed-sales', reportController.getDetailedSales);
-
-// Contoh rute yang hanya bisa diakses admin (jika ada laporan khusus admin)
-// router.get('/admin-only-report', authorizeRoles('admin'), reportController.getAdminReport);
+// Rute untuk mendapatkan laporan laba rugi (hanya admin)
+router.get('/profit-loss', verifyToken, authorizeRoles(['admin']), reportController.getProfitLossReport);
 
 module.exports = router;
