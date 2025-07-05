@@ -4,9 +4,6 @@ const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
-console.log('Debug: transactionRoutes loaded:', transactionRoutes);
-console.log('Debug: transactionController loaded:', require('./controllers/transactionController'));
-console.log('Debug: getAllTransactions function:', require('./controllers/transactionController').getAllTransactions);
 const userRoutes = require('./routes/userRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
@@ -19,13 +16,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ====================================================================================
-// URUTAN MIDDLEWARE YANG DIREKOMENDASIKAN OLEH RAILWAY UNTUK CORS
-// Middleware untuk mengurai body permintaan JSON (HARUS DI ATAS CORS JIKA ADA MASALAH)
-app.use(express.json());
+// KONFIGURASI CORS YANG SANGAT PRESISI
+// Pastikan ini adalah URL frontend Vercel Anda yang disalin LANGSUNG dari browser, TANPA GARIS MIRING DI AKHIR
+const allowedOrigin = 'https://aplikasi-kasir-pos.vercel.app'; // GANTI DENGAN URL YANG ANDA SALIN
 
-// Pastikan ini adalah URL frontend Vercel Anda yang sebenarnya
-// PENTING: Hapus garis miring di akhir URL jika browser tidak mengirimkannya di Origin header
-const allowedOrigin = 'https://aplikasi-kasir-pos.vercel.app'; // PASTIKAN TIDAK ADA GARIS MIRING DI AKHIR
+// Middleware untuk mengurai body permintaan JSON (HARUS DI ATAS CORS jika ada masalah)
+app.use(express.json());
 
 // Middleware CORS
 app.use(cors({
