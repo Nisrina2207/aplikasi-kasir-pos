@@ -2,9 +2,9 @@
 // Fungsi-fungsi ini didefinisikan di global scope agar bisa diakses oleh semua script halaman
 
 // ====================================================================================
-// PENTING: GANTI URL INI DENGAN URL BACKEND RAILWAY ANDA YANG SEBENARNYA
-// Pastikan ada '/api' di akhir jika rute backend Anda diawali dengan '/api'
-const BASE_URL = 'https://aplikasi-kasir-pos-production.up.railway.app/api';
+// PENTING: GANTI URL INI DENGAN URL BACKEND GLITCH ANDA YANG SEBENARNYA
+// URL Glitch Anda adalah: https://handsomely-accurate-tie.glitch.me
+const BASE_URL = 'https://handsomely-accurate-tie.glitch.me/api';
 // ====================================================================================
 
 // Menambahkan parameter skipAuthCheck
