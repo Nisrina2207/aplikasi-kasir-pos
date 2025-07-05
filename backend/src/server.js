@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors'); // Tetap impor cors
+const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
@@ -12,33 +12,39 @@ const categoryRoutes = require('./routes/categoryRoutes');
 dotenv.config();
 
 const app = express();
+// Mengambil PORT dari variabel lingkungan atau menggunakan 5000 sebagai default
+// Render akan menyediakan PORT secara otomatis, jadi process.env.PORT akan terisi
 const PORT = process.env.PORT || 5000;
 
 // Middleware untuk mengurai body permintaan JSON
 app.use(express.json());
 
 // ====================================================================================
-// KONFIGURASI CORS UNTUK DIGUNAKAN PADA RUTE TERTENTU
-// Definisikan corsOptions di sini
-const corsOptions = {
-    origin: 'https://aplikasi-kasir-pos.vercel.app', // PASTIKAN URL INI SAMA PERSIS TANPA GARIS MIRING AKHIR
+// KONFIGURASI CORS UNTUK RENDER.COM
+// Pastikan ini adalah URL frontend Vercel Anda yang disalin LANGSUNG dari browser, TANPA GARIS MIRING DI AKHIR
+const allowedOrigin = 'https://aplikasi-kasir-pos.vercel.app'; 
+
+// Middleware CORS
+app.use(cors({
+    origin: allowedOrigin,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
-};
+}));
 
+// Tangani permintaan OPTIONS preflight secara eksplisit
+app.options('*', cors());
 // ====================================================================================
 
 // Mengatur rute-rute API
-// Terapkan middleware cors() secara spesifik untuk setiap rute
-app.use('/api/auth', cors(corsOptions), authRoutes); // Terapkan CORS di sini
-app.use('/api/products', cors(corsOptions), productRoutes); // Terapkan CORS di sini
-app.use('/api/transactions', cors(corsOptions), transactionRoutes); // Terapkan CORS di sini
-app.use('/api/users', cors(corsOptions), userRoutes); // Terapkan CORS di sini
-app.use('/api/reports', cors(corsOptions), reportRoutes); // Terapkan CORS di sini
-app.use('/api/categories', cors(corsOptions), categoryRoutes); // Terapkan CORS di sini
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/categories', categoryRoutes);
 
-// Rute dasar untuk pengujian API (tidak perlu CORS khusus jika hanya GET)
+// Rute dasar untuk pengujian API
 app.get('/', (req, res) => {
     res.send('POS Backend API is running!');
 });
