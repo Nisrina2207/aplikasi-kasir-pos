@@ -2,9 +2,10 @@
 // Fungsi-fungsi ini didefinisikan di global scope agar bisa diakses oleh semua script halaman
 
 // ====================================================================================
-// PENTING: GANTI URL INI DENGAN URL BACKEND GLITCH ANDA YANG SEBENARNYA
-// URL Glitch Anda adalah: https://handsomely-accurate-tie.glitch.me
-const BASE_URL = 'https://handsomely-accurate-tie.glitch.me/api';
+// PENTING: BASE_URL UNTUK VERCEL API ROUTES
+// Karena backend sekarang di-deploy sebagai Vercel API Routes di domain yang sama,
+// kita bisa menggunakan path relatif.
+const BASE_URL = '/api'; 
 // ====================================================================================
 
 // Menambahkan parameter skipAuthCheck
