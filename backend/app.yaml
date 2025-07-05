@@ -1,0 +1,13 @@
+runtime: nodejs20 # Atau versi Node.js terbaru yang didukung App Engine (misal: nodejs18, nodejs20)
+env: standard
+instance_class: F1 # Kelas instance gratis atau paling murah
+
+handlers:
+- url: /.*
+  script: auto
+
+env_variables:
+  NODE_ENV: 'production'
+  DATABASE_URL: 'postgresql://postgres:OYykaGpAWOrlesdZDFHLrwDMjCpQZXrH@mainline.proxy.rlwy.net:56840/railway' # GANTI DENGAN CONNECTION STRING ANDA
+  JWT_SECRET_KEY: 'Sahjsukyeovvsnrhudeoikyh12316haF12456nan789vJq5h67n8s4v6x9e5a9F0' # GANTI DENGAN SECRET KEY ANDA
+  # PORT tidak perlu didefinisikan di sini, App Engine akan menyediakannya secara otomatis

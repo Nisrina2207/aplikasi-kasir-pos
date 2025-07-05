@@ -9,18 +9,18 @@ const reportRoutes = require('./routes/reportRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 
 // Memuat variabel lingkungan dari file .env
-dotenv.config();
+// Glitch menggunakan file .env, jadi biarkan dotenv.config()
+dotenv.config(); 
 
 const app = express();
-// Mengambil PORT dari variabel lingkungan atau menggunakan 5000 sebagai default
-// Cyclic akan menyediakan PORT secara otomatis, jadi process.env.PORT akan terisi
-const PORT = process.env.PORT || 5000;
+// Glitch akan menyediakan PORT secara otomatis melalui variabel lingkungan
+const PORT = process.env.PORT || 3000; // Glitch default ke 3000
 
 // Middleware untuk mengurai body permintaan JSON
 app.use(express.json());
 
 // ====================================================================================
-// KONFIGURASI CORS UNTUK CYCLIC.SH
+// KONFIGURASI CORS UNTUK GLITCH.COM
 // Pastikan ini adalah URL frontend Vercel Anda yang disalin LANGSUNG dari browser, TANPA GARIS MIRING DI AKHIR
 const allowedOrigin = 'https://aplikasi-kasir-pos.vercel.app'; 
 
