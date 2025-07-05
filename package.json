@@ -1,9 +1,21 @@
 {
+  "name": "aplikasi-kasir-pos-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node api/auth/login.js", 
+    "build": "echo 'No specific build step for this monorepo, Vercel handles API/Frontend separately'", // Tambahkan ini
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.1",
-    "pg": "^8.11.3"  
+    "pg": "^8.11.3"
   }
 }

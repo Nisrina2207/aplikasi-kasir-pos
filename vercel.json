@@ -1,14 +1,9 @@
 {
-  "build": {
-    "env": {
-      "DATABASE_URL": "@database_url",
-      "JWT_SECRET": "@jwt_secret",
-      "NODE_ENV": "production"
-    }
-  },
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
   "functions": {
     "api/**/*.js": {
-      "runtime": "@vercel/node@3.0.0" 
+      "runtime": "@vercel/node@3.0.0"
     }
   },
   "rewrites": [
@@ -20,5 +15,10 @@
       "source": "/(.*)",
       "destination": "/frontend/$1"
     }
-  ]
+  ],
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "JWT_SECRET": "@jwt_secret",
+    "NODE_ENV": "production"
+  }
 }
