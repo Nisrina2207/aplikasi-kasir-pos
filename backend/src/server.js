@@ -8,18 +8,36 @@ const userRoutes = require('./routes/userRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 
+// Memuat variabel lingkungan dari file .env
 dotenv.config();
 
 const app = express();
+// Mengambil PORT dari variabel lingkungan atau menggunakan 5000 sebagai default
 const PORT = process.env.PORT || 5000;
 
 // ====================================================================================
-// KONFIGURASI CORS PALING LONGGAR (HANYA UNTUK UJI COBA)
-app.use(cors()); // Ini akan mengizinkan SEMUA origin
-// ====================================================================================
-
+// URUTAN MIDDLEWARE YANG DIREKOMENDASIKAN OLEH RAILWAY UNTUK CORS
+// Middleware untuk mengurai body permintaan JSON (HARUS DI ATAS CORS JIKA ADA MASALAH)
 app.use(express.json());
 
+// Pastikan ini adalah URL frontend Vercel Anda yang sebenarnya
+// PENTING: Hapus garis miring di akhir URL jika browser tidak mengirimkannya di Origin header
+const allowedOrigin = 'https://aplikasi-kasir-pos.vercel.app'; // PASTIKAN TIDAK ADA GARIS MIRING DI AKHIR
+
+// Middleware CORS
+app.use(cors({
+    origin: allowedOrigin,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Tambahkan OPTIONS secara eksplisit
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'] // Tambahkan header yang diizinkan
+}));
+
+// Tangani permintaan OPTIONS preflight secara eksplisit
+// Ini memastikan bahwa preflight request direspons dengan benar
+app.options('*', cors());
+// ====================================================================================
+
+// Mengatur rute-rute API
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/transactions', transactionRoutes);
@@ -27,10 +45,12 @@ app.use('/api/users', userRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/categories', categoryRoutes);
 
+// Rute dasar untuk pengujian API
 app.get('/', (req, res) => {
     res.send('POS Backend API is running!');
 });
 
+// Memulai server dan mendengarkan di port yang ditentukan
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

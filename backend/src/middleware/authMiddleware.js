@@ -1,33 +1,50 @@
 const jwt = require('jsonwebtoken');
 
-// Middleware untuk otentikasi token JWT
-exports.authenticateToken = (req, res, next) => {
+// Middleware untuk memverifikasi token JWT
+const verifyToken = (req, res, next) => {
+    // Ambil token dari header Authorization
+    // Format: Bearer <token>
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Format: Bearer TOKEN
+    const token = authHeader && authHeader.split(' ')[1];
 
-    if (token == null) {
-        return res.status(401).json({ message: 'Authentication token required' });
+    // Jika tidak ada token, kembalikan error 401 Unauthorized
+    if (!token) {
+        return res.status(401).json({ message: 'Akses ditolak. Tidak ada token yang diberikan.' });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            console.error('JWT verification error:', err.message);
-            return res.status(403).json({ message: 'Invalid or expired token' });
-        }
-        req.user = user; // Menambahkan payload user ke objek request
+    try {
+        // Verifikasi token menggunakan secret key
+        // Pastikan process.env.JWT_SECRET_KEY sama dengan yang digunakan saat membuat token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        
+        // Tambahkan informasi user yang didekode ke objek request
+        req.user = decoded;
+        
+        // Lanjutkan ke middleware atau route berikutnya
         next();
-    });
+    } catch (error) {
+        // Jika token tidak valid (misalnya kadaluarsa, salah tanda tangan)
+        console.error('Verifikasi token gagal:', error.message);
+        return res.status(403).json({ message: 'Token tidak valid.' });
+    }
 };
 
-// Middleware untuk otorisasi berdasarkan peran
-exports.authorizeRole = (roles) => {
+// Middleware untuk memeriksa peran pengguna (misalnya, admin)
+const authorizeRoles = (...roles) => {
     return (req, res, next) => {
+        // Pastikan req.user ada (dari middleware verifyToken)
         if (!req.user || !req.user.role) {
-            return res.status(403).json({ message: 'Access denied: User role not found' });
+            return res.status(403).json({ message: 'Akses ditolak. Informasi peran tidak ditemukan.' });
         }
+
+        // Periksa apakah peran pengguna termasuk dalam peran yang diizinkan
         if (!roles.includes(req.user.role)) {
-            return res.status(403).json({ message: 'Access denied: Insufficient permissions' });
+            return res.status(403).json({ message: 'Akses ditolak. Anda tidak memiliki izin yang diperlukan.' });
         }
+        
+        // Lanjutkan ke middleware atau route berikutnya
         next();
     };
 };
+
+module.exports = { verifyToken, authorizeRoles };
