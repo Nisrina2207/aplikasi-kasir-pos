@@ -1,7 +1,7 @@
 const express = require('express');
-const router = express();
+// PENTING: Gunakan express.Router() untuk membuat instance router
+const router = express.Router(); 
 const transactionController = require('../controllers/transactionController');
-// PENTING: Impor verifyToken dan authorizeRoles dengan benar
 const { verifyToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 // Rute untuk mendapatkan semua transaksi (hanya admin)
