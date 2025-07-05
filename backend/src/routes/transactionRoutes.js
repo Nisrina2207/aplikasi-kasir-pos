@@ -13,7 +13,7 @@ console.log('Debug (transactionRoutes.js - Pre-route): transactionController.get
 router.get('/', 
     verifyToken, 
     authorizeRoles(['admin']), 
-    // DEBUG: Log fungsi yang sebenarnya akan dilewatkan ke Express
+    // PENTING: Gunakan fungsi anonim sebagai wrapper untuk handler
     (req, res, next) => {
         console.log('Debug (transactionRoutes.js - Inside GET /): Calling getAllTransactions');
         if (typeof transactionController.getAllTransactions === 'function') {
